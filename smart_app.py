@@ -684,6 +684,47 @@ elif page == "🔮 Predict Demand":
         unsafe_allow_html=True
     )
 
+    # ── Train vs Test Accuracy Comparison ─────────────────────────────────────
+    train_r2  = rdf.iloc[0]["Train R² %"]
+    test_r2   = rdf.iloc[0]["Test R² %"]
+    train_acc = cdf.iloc[0]["Train Acc %"]
+    test_acc  = cdf.iloc[0]["Test Acc %"]
+    gap_r     = round(train_r2  - test_r2,  2)
+    gap_c     = round(train_acc - test_acc, 2)
+    overfit_r = "✅ No Overfitting" if gap_r <= 3 else "⚠️ Slight Overfit" if gap_r <= 8 else "❌ Overfit"
+    overfit_c = "✅ No Overfitting" if gap_c <= 3 else "⚠️ Slight Overfit" if gap_c <= 8 else "❌ Overfit"
+    gap_col_r = "#27ae60" if gap_r <= 3 else "#f39c12" if gap_r <= 8 else "#e74c3c"
+    gap_col_c = "#27ae60" if gap_c <= 3 else "#f39c12" if gap_c <= 8 else "#e74c3c"
+
+    st.markdown('<div class="sec"><h3>📊 Training vs Testing Accuracy</h3><p>Compares how the model performs on data it learned from (train) vs data it never saw (test) — a small gap means no overfitting.</p></div>', unsafe_allow_html=True)
+
+    b1, b2, b3, b4, b5, b6 = st.columns(6)
+    with b1:
+        st.markdown(f'<div class="kpi"><div class="kpi-label">🔵 Train R²</div><div class="kpi-value" style="color:#5ba3d9">{train_r2}%</div><div class="kpi-sub">Regression · train set</div></div>', unsafe_allow_html=True)
+    with b2:
+        st.markdown(f'<div class="kpi"><div class="kpi-label">🟢 Test R²</div><div class="kpi-value" style="color:#27ae60">{test_r2}%</div><div class="kpi-sub">Regression · test set</div></div>', unsafe_allow_html=True)
+    with b3:
+        st.markdown(f'<div class="kpi"><div class="kpi-label">Gap (Overfit check)</div><div class="kpi-value" style="color:{gap_col_r};font-size:1.1rem">{gap_r}% · {overfit_r}</div><div class="kpi-sub">Train R² − Test R²</div></div>', unsafe_allow_html=True)
+    with b4:
+        st.markdown(f'<div class="kpi"><div class="kpi-label">🔵 Train Accuracy</div><div class="kpi-value" style="color:#5ba3d9">{train_acc}%</div><div class="kpi-sub">Classification · train set</div></div>', unsafe_allow_html=True)
+    with b5:
+        st.markdown(f'<div class="kpi"><div class="kpi-value" style="color:#27ae60">🟢 Test Accuracy</div><div class="kpi-value" style="color:#27ae60">{test_acc}%</div><div class="kpi-sub">Classification · test set</div></div>', unsafe_allow_html=True)
+    with b6:
+        st.markdown(f'<div class="kpi"><div class="kpi-label">Gap (Overfit check)</div><div class="kpi-value" style="color:{gap_col_c};font-size:1.1rem">{gap_c}% · {overfit_c}</div><div class="kpi-sub">Train Acc − Test Acc</div></div>', unsafe_allow_html=True)
+
+    st.markdown(
+        f"<div style='background:#0a1628;border:1px solid #1a2e4a;border-radius:8px;"
+        f"padding:.55rem 1rem;font-size:.78rem;color:#5b7a99;margin-bottom:1rem'>"
+        f"📌 <b style='color:#8aacc8'>Interpretation</b> — "
+        f"Regression: Train R²=<b style='color:#5ba3d9'>{train_r2}%</b> vs Test R²=<b style='color:#27ae60'>{test_r2}%</b> "
+        f"(gap = <b style='color:{gap_col_r}'>{gap_r}%</b>). "
+        f"Classification: Train Acc=<b style='color:#5ba3d9'>{train_acc}%</b> vs Test Acc=<b style='color:#27ae60'>{test_acc}%</b> "
+        f"(gap = <b style='color:{gap_col_c}'>{gap_c}%</b>). "
+        f"A gap under 3% confirms the model generalises well to new, unseen data."
+        f"</div>",
+        unsafe_allow_html=True
+    )
+
     # Calendar sync banner
     st.markdown(
         f'<div class="cal-info">🗓️ Calendar synced to today — '
